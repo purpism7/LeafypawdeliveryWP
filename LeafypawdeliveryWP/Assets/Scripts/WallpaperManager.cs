@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-public class WallpaperController : MonoBehaviour
+public class WallpaperManager : MonoBehaviour
 {
     #region WinAPI Imports
     // 윈도우 OS의 핵심 기능을 가져옵니다.
@@ -42,6 +42,13 @@ public class WallpaperController : MonoBehaviour
 
     private const uint SWP_SHOWWINDOW = 0x0040;
 
+    [Header("사이드바 설정")]
+    [Tooltip("사이드바의 가로 너비 (픽셀 단위)")]
+    public int sidebarWidth = 500;
+
+    [Tooltip("체크하면 오른쪽 배치, 끄면 왼쪽 배치")]
+    public bool alignRight = true;
+
     void Start()
     {
         // 빌드된 게임에서만 실행 (에디터에서는 실행 방지)
@@ -52,56 +59,62 @@ public class WallpaperController : MonoBehaviour
 
     void InitializeWallpaper()
     {
-        // 1. 현재 실행 중인 유니티 윈도우 핸들 찾기
-        // 주의: "ProjectName" 부분을 빌드할 때 설정한 'Product Name'과 똑같이 맞춰야 찾을 수 있습니다.
-        // 혹은 null을 넣고 Application.productName을 쓸 수도 있지만, 가장 확실한 건 윈도우 타이틀입니다.
+        // 1. 내 게임 창 찾기 (Product Name이 중요!)
         IntPtr unityWindow = FindWindow(null, Application.productName);
 
         if (unityWindow == IntPtr.Zero)
         {
-            Debug.LogError("유니티 창을 찾을 수 없습니다. Product Name을 확인하세요.");
-            return;
+            // 이름을 못 찾았을 경우를 대비해 클래스 이름으로 한 번 더 시도
+            unityWindow = FindWindow("UnityWndClass", null);
         }
 
-        // 2. 윈도우 테두리 제거 (깔끔하게 전체화면처럼 보이게)
+        // 2. 창 테두리 제거
         int style = GetWindowLong(unityWindow, GWL_STYLE);
         SetWindowLong(unityWindow, GWL_STYLE, style & ~(WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX));
 
-        // 3. Progman(프로그램 매니저) 찾기
+        // 3. 윈도우 바탕화면 관리자(Progman) 찾기
         IntPtr progman = FindWindow("Progman", null);
 
-        // 4. Progman에게 0x052C 메시지 보내기
-        // 이 메시지를 보내면 윈도우가 'WorkerW'라는 레이어를 바탕화면 아이콘 뒤에 생성합니다.
+        // 4. 바탕화면 생성 메시지 전송 (0x052C)
         SendMessage(progman, 0x052C, 0, 0);
 
-        // 5. 우리가 붙어야 할 진짜 배경화면 레이어(WorkerW) 찾기
+        // 5. WorkerW(진짜 배경화면 레이어) 찾기
         IntPtr workerw = IntPtr.Zero;
-
-        // 모든 윈도우를 뒤져서 SHELLDLL_DefView를 가진 WorkerW의 '다음 형제'를 찾습니다.
         EnumWindows((hwnd, lParam) =>
         {
             IntPtr shellDll = FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null);
             if (shellDll != IntPtr.Zero)
             {
-                // SHELLDLL_DefView를 가진 WorkerW를 찾았다면, 그 다음 형제가 진짜 배경화면 레이어입니다.
                 workerw = FindWindowEx(IntPtr.Zero, hwnd, "WorkerW", null);
             }
             return true;
         }, IntPtr.Zero);
 
-        if (workerw == IntPtr.Zero)
-        {
-            // 만약 위 방법으로 못 찾았다면(바탕화면 설정에 따라 다름), 그냥 Progman을 쓸 수도 있습니다.
-            workerw = progman;
-        }
+        if (workerw == IntPtr.Zero) workerw = progman;
 
-        // 6. 유니티 창을 WorkerW의 자식으로 설정 (입양 보내기)
+        // 6. 부모 변경 (입양)
         SetParent(unityWindow, workerw);
 
-        // 7. 위치와 크기 조정 (왼쪽 위 0,0에 딱 붙이기)
-        // 모니터 해상도에 맞춰 꽉 채웁니다.
+        // 7. 전체화면으로 크기 맞추기
         int screenWidth = Screen.currentResolution.width;
         int screenHeight = Screen.currentResolution.height;
-        SetWindowPos(unityWindow, IntPtr.Zero, 0, 0, screenWidth, screenHeight, SWP_SHOWWINDOW);
+
+        int finalX = 0;
+        int finalY = 0; // 맨 위
+        int finalWidth = sidebarWidth; // 설정한 너비
+        int finalHeight = screenHeight; // 세로는 꽉 차게
+
+        //if (alignRight)
+        //{
+        //    // 오른쪽 배치: (전체화면 너비 - 사이드바 너비)가 시작점 X
+        //    finalX = screenWidth - sidebarWidth;
+        //}
+        //else
+        //{
+        //    // 왼쪽 배치: 시작점 X는 0
+        //    finalX = 0;
+        //}
+
+        SetWindowPos(unityWindow, IntPtr.Zero, finalX, finalY, finalWidth, finalHeight, SWP_SHOWWINDOW);
     }
 }

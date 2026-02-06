@@ -1,0 +1,12 @@
+# Unity Build Outputs
+*.exe
+*.dll
+*_Data/
+MonoBleedingEdge/
+UnityCrashHandler*.exe
+UnityPlayer.dll
+D3D12/
+*_BurstDebugInformation_DoNotShip/
+
+# Unity Project folders (should be in LeafypawdeliveryWP subfolder)
+# Keep only the project folder, ignore build outputs in root

@@ -26,6 +26,9 @@
 # Visual Studio cache directory
 .vs/
 
+# JetBrains Rider / IntelliJ IDEA
+.idea/
+
 # Gradle cache directory
 .gradle/
 
@@ -60,6 +63,14 @@ sysinfo.txt
 *.aab
 *.unitypackage
 *.app
+
+# Windows Builds
+*.exe
+*.dll
+*_Data/
+MonoBleedingEdge/
+UnityCrashHandler*.exe
+UnityPlayer.dll
 
 # Crashlytics generated file
 crashlytics-build.properties
