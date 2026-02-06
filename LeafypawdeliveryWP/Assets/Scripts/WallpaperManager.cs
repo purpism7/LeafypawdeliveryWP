@@ -1,11 +1,11 @@
-using System;
+ï»¿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class WallpaperManager : MonoBehaviour
 {
     #region WinAPI Imports
-    // À©µµ¿ì OSÀÇ ÇÙ½É ±â´ÉÀ» °¡Á®¿É´Ï´Ù.
+    // ìœˆë„ìš° OSì˜ ì°½ í•¸ë“¤ì„ ê°€ì ¸ì˜µë‹ˆë‹¤.
     [DllImport("user32.dll")]
     public static extern IntPtr FindWindow(string className, string windowName);
 
@@ -33,7 +33,7 @@ public class WallpaperManager : MonoBehaviour
     public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
     #endregion
 
-    // ¹ÙÅÁÈ­¸é µÚ·Î º¸³¾ ¶§ ÇÊ¿äÇÑ ¸ÅÁ÷ ³Ñ¹öµé
+    // ë°”íƒ•í™”ë©´ ì•„ë˜ ê¹”ë•Œ í•„ìš”í•œ ì°½ í•¸ë“¤ë“¤
     private const int GWL_STYLE = -16;
     private const int WS_BORDER = 0x00800000;
     private const int WS_CAPTION = 0x00C00000;
@@ -42,16 +42,16 @@ public class WallpaperManager : MonoBehaviour
 
     private const uint SWP_SHOWWINDOW = 0x0040;
 
-    [Header("»çÀÌµå¹Ù ¼³Á¤")]
-    [Tooltip("»çÀÌµå¹ÙÀÇ °¡·Î ³Êºñ (ÇÈ¼¿ ´ÜÀ§)")]
+    [Header("ì‚¬ì´ë“œë°” ì„¤ì •")]
+    [Tooltip("ì‚¬ì´ë“œë°”ì˜ ê°€ë¡œ ë„“ì´ (í”½ì…€ ë‹¨ìœ„)")]
     public int sidebarWidth = 500;
 
-    [Tooltip("Ã¼Å©ÇÏ¸é ¿À¸¥ÂÊ ¹èÄ¡, ²ô¸é ¿ŞÂÊ ¹èÄ¡")]
+    [Tooltip("ì²´í¬í•˜ë©´ ì˜¤ë¥¸ìª½ ë°°ì¹˜, ì•„ë‹ˆë©´ ì™¼ìª½ ë°°ì¹˜")]
     public bool alignRight = true;
 
     void Start()
     {
-        // ºôµåµÈ °ÔÀÓ¿¡¼­¸¸ ½ÇÇà (¿¡µğÅÍ¿¡¼­´Â ½ÇÇà ¹æÁö)
+        // ë¹Œë“œëœ ì•±ì—ì„œë§Œ ì‹¤í–‰ (ì—ë””í„°ì—ì„œëŠ” ì‹¤í–‰ ì•ˆí•¨)
 #if !UNITY_EDITOR
         InitializeWallpaper();
 #endif
@@ -59,26 +59,26 @@ public class WallpaperManager : MonoBehaviour
 
     void InitializeWallpaper()
     {
-        // 1. ³» °ÔÀÓ Ã¢ Ã£±â (Product NameÀÌ Áß¿ä!)
+        // 1. ë‚´ ì°½ ì°¾ê¸° (Product Nameì´ ì¤‘ìš”!)
         IntPtr unityWindow = FindWindow(null, Application.productName);
 
         if (unityWindow == IntPtr.Zero)
         {
-            // ÀÌ¸§À» ¸ø Ã£¾ÒÀ» °æ¿ì¸¦ ´ëºñÇØ Å¬·¡½º ÀÌ¸§À¸·Î ÇÑ ¹ø ´õ ½Ãµµ
+            // ì´ë¦„ì„ ëª» ì°¾ì•˜ì„ ê²½ìš°ë¥¼ ëŒ€ë¹„í•´ í´ë˜ìŠ¤ ì´ë¦„ìœ¼ë¡œ í•œë²ˆ ë” ì‹œë„
             unityWindow = FindWindow("UnityWndClass", null);
         }
 
-        // 2. Ã¢ Å×µÎ¸® Á¦°Å
+        // 2. ì°½ ìŠ¤íƒ€ì¼ ì œê±°
         int style = GetWindowLong(unityWindow, GWL_STYLE);
         SetWindowLong(unityWindow, GWL_STYLE, style & ~(WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX));
 
-        // 3. À©µµ¿ì ¹ÙÅÁÈ­¸é °ü¸®ÀÚ(Progman) Ã£±â
+        // 3. ìœˆë„ìš° ë°”íƒ•í™”ë©´ ê´€ë¦¬ì(Progman) ì°¾ê¸°
         IntPtr progman = FindWindow("Progman", null);
 
-        // 4. ¹ÙÅÁÈ­¸é »ı¼º ¸Ş½ÃÁö Àü¼Û (0x052C)
+        // 4. ë°”íƒ•í™”ë©´ ìƒì„± ì‹œê·¸ë„ ì „ì†¡ (0x052C)
         SendMessage(progman, 0x052C, 0, 0);
 
-        // 5. WorkerW(ÁøÂ¥ ¹è°æÈ­¸é ·¹ÀÌ¾î) Ã£±â
+        // 5. WorkerW(ë°ìŠ¤í¬í†± ë°°ê²½í™”ë©´ ë¶€ëª¨) ì°¾ê¸°
         IntPtr workerw = IntPtr.Zero;
         EnumWindows((hwnd, lParam) =>
         {
@@ -92,28 +92,28 @@ public class WallpaperManager : MonoBehaviour
 
         if (workerw == IntPtr.Zero) workerw = progman;
 
-        // 6. ºÎ¸ğ º¯°æ (ÀÔ¾ç)
+        // 6. ë¶€ëª¨ ë³€ê²½ (ì„¤ì •)
         SetParent(unityWindow, workerw);
 
-        // 7. ÀüÃ¼È­¸éÀ¸·Î Å©±â ¸ÂÃß±â
+        // 7. ì „ì²´í™”ë©´ìœ¼ë¡œ í¬ê¸° ë§ì¶”ê¸°
         int screenWidth = Screen.currentResolution.width;
         int screenHeight = Screen.currentResolution.height;
 
         int finalX = 0;
-        int finalY = 0; // ¸Ç À§
-        int finalWidth = sidebarWidth; // ¼³Á¤ÇÑ ³Êºñ
-        int finalHeight = screenHeight; // ¼¼·Î´Â ²Ë Â÷°Ô
+        int finalY = 0; // ì™¼ìª½ ìœ„ì¹˜
+        int finalWidth = sidebarWidth; // ì„¤ì •í•œ ë„“ì´
+        int finalHeight = screenHeight; // ë†’ì´ëŠ” ì „ ë†’ì´
 
-        //if (alignRight)
-        //{
-        //    // ¿À¸¥ÂÊ ¹èÄ¡: (ÀüÃ¼È­¸é ³Êºñ - »çÀÌµå¹Ù ³Êºñ)°¡ ½ÃÀÛÁ¡ X
-        //    finalX = screenWidth - sidebarWidth;
-        //}
-        //else
-        //{
-        //    // ¿ŞÂÊ ¹èÄ¡: ½ÃÀÛÁ¡ X´Â 0
-        //    finalX = 0;
-        //}
+        if (alignRight)
+        {
+            // ì˜¤ë¥¸ìª½ ë°°ì¹˜: (ì „ì²´í™”ë©´ ë„“ì´ - ì‚¬ì´ë“œë°” ë„“ì´)ê°€ ì‹œì‘ì  X
+            finalX = screenWidth - sidebarWidth;
+        }
+        else
+        {
+            // ì™¼ìª½ ë°°ì¹˜: ì‹œì‘ì  XëŠ” 0
+            finalX = 0;
+        }
 
         SetWindowPos(unityWindow, IntPtr.Zero, finalX, finalY, finalWidth, finalHeight, SWP_SHOWWINDOW);
     }

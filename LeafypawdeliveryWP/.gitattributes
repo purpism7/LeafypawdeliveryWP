@@ -1,0 +1,32 @@
+# Git Fork 및 Git에서 한글 인코딩이 깨지지 않도록 UTF-8 고정
+* text=auto eol=lf
+*.cs text eol=lf
+*.csproj text eol=lf
+*.sln text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.shader text eol=lf
+*.cginc text eol=lf
+*.asset text eol=lf
+*.unity text eol=lf
+*.meta text eol=lf
+
+# 바이너리로 취급 (변환 금지)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.psd binary
+*.tga binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.ttf binary
+*.otf binary
+*.dll binary
+*.so binary
+*.a binary
+*.dylib binary
