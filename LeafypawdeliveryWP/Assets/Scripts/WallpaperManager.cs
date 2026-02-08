@@ -29,6 +29,12 @@ public class WallpaperManager : MonoBehaviour
 
     [DllImport("user32.dll")]
     public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+    
+#if UNITY_STANDALONE_OSX
+    // "__Internal"은 맥 네이티브(.mm) 파일과 연결할 때 사용하는 약속된 이름입니다.
+    [DllImport("__Internal")]
+    private static extern void SetMacWallpaperMode(string windowName, int x, int y, int width, int height);
+#endif
 
     public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
     #endregion
@@ -53,11 +59,18 @@ public class WallpaperManager : MonoBehaviour
     {
         // 빌드된 앱에서만 실행 (에디터에서는 실행 안함)
 #if !UNITY_EDITOR
-        InitializeWallpaper();
+        if (Application.platform == RuntimePlatform.WindowsPlayer)
+        {
+            InitializeWindowsWallpaper();
+        }
+        else if (Application.platform == RuntimePlatform.OSXPlayer)
+        {
+            InitializeMacWallpaper();
+        }
 #endif
     }
 
-    void InitializeWallpaper()
+    void InitializeWindowsWallpaper()
     {
         // 1. 내 창 찾기 (Product Name이 중요!)
         IntPtr unityWindow = FindWindow(null, Application.productName);
@@ -116,5 +129,20 @@ public class WallpaperManager : MonoBehaviour
         }
 
         SetWindowPos(unityWindow, IntPtr.Zero, finalX, finalY, finalWidth, finalHeight, SWP_SHOWWINDOW);
+    }
+    
+    private void InitializeMacWallpaper()
+    {
+#if UNITY_STANDALONE_OSX
+        int screenWidth = Screen.currentResolution.width;
+        int screenHeight = Screen.currentResolution.height;
+
+        int finalX = alignRight ? (screenWidth - sidebarWidth) : 0;
+        // 맥의 좌표계는 왼쪽 아래가 (0,0)이므로 Y좌표 주의가 필요할 수 있습니다.
+        int finalY = 0; 
+
+        // Product Name을 기준으로 창을 찾습니다.
+        SetMacWallpaperMode(Application.productName, finalX, finalY, sidebarWidth, screenHeight);
+#endif
     }
 }
