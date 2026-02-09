@@ -175,7 +175,6 @@ GameObject:
   m_Component:
   - component: {fileID: 369989880}
   - component: {fileID: 369989879}
-  - component: {fileID: 369989878}
   - component: {fileID: 369989877}
   m_Layer: 0
   m_Name: UICamera
@@ -228,14 +227,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!81 &369989878
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 369989876}
-  m_Enabled: 1
 --- !u!20 &369989879
 Camera:
   m_ObjectHideFlags: 0
@@ -448,6 +439,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 522430220}
+  - component: {fileID: 522430221}
   m_Layer: 0
   m_Name: GameSceneBootsrapper
   m_TagString: Untagged
@@ -470,6 +462,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &522430221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 522430219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11d177a53bb24408f9d65094206cd39f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSceneBootstrapper
 --- !u!1 &753525118
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UI.Main
+namespace Features.Main
 {
     public class MainModel
     {

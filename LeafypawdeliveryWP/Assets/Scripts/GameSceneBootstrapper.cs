@@ -1,12 +1,17 @@
-using Unity.VectorGraphics;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+
+using Features.Main;
 
 public class GameSceneBootstrapper : SceneBootstrapper
 {
-    protected override void Initialize()
+    protected override async UniTask InitializeAsync()
     {
-        base.Initialize();
-        
-        
+        await base.InitializeAsync();
+
+        Debug.Log("GameSceneBootstrapper: Preload 끝난 뒤 진입");
+        //_entityFactory?.Create<MainView, MainPresenter, MainModel>(null);
+
+        await UniTask.CompletedTask;
     }
 }

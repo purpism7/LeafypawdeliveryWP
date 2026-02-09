@@ -1,16 +1,24 @@
 using System;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+
+using Factories;
 
 public abstract class SceneBootstrapper : MonoBehaviour
 {
     private void Awake()
     {
-        Initialize();
+        InitializeAsync().Forget();
     }
 
-    protected virtual void Initialize()
+    protected virtual async UniTask InitializeAsync()
     {
-        Debug.Log("SceneBootstrapper Initialize");
-        var uIManager = new UIManager();
+        var addressableManager = new AddressableManager();
+
+        if(addressableManager != null)
+            await addressableManager.PreloadAsync();
+
+        MainFactory factory = new MainFactory(addressableManager);
+        factory.CreateAsync().Forget();
     }
 }

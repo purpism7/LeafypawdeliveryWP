@@ -11,10 +11,12 @@ public class EntityFactory
         _addressableManager = addressableManager;
     }
     
-    public void Create<TView, TPresenter, TModel>()
+    public void Create<TView, TPresenter, TModel>(TModel model)
         where TView : Entity where TPresenter : BasePresenter<TView, TModel>, new() where TModel : class
     {
-        var presenter = new TPresenter();
-        presenter.CreatePresenter();
+        var view = _addressableManager?.Get<TView>();
+
+        //var presenter = new TPresenter();
+        //presenter.Initialize(view, model);
     }
 }
