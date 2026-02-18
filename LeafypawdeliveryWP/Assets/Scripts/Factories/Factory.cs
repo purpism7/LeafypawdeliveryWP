@@ -1,6 +1,7 @@
-using Common;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+
+using Common;
 
 namespace Factories
 {
@@ -8,9 +9,11 @@ namespace Factories
     {
         private readonly AddressableManager _addressableManager = null;
 
-        public abstract UniTask CreateAsync();
+        public abstract System.Type Type { get; } 
+        
+        public abstract UniTask<TPresenter> CreateAsync<TPresenter>() where TPresenter : class;
 
-        public Factory(AddressableManager addressableManager)
+        protected Factory(AddressableManager addressableManager)
         {
             _addressableManager = addressableManager;
         }

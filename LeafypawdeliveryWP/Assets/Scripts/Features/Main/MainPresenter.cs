@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using Common;
+
 namespace Features.Main
 {
     public class MainPresenter : BasePresenter<MainView, MainModel>

@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -12,12 +13,16 @@ namespace Factories
 
         }
 
-        public override async UniTask CreateAsync()
+        public override Type Type => typeof(MainPresenter);
+
+        public override async UniTask<TPresenter> CreateAsync<TPresenter>()
         {
             var view = CreateView<MainView>();
             var model = CreateModel<MainModel>();
-
-            var presenter = new MainPresenter(view, model);
+        
+            var presenter = new MainPresenter(view, model) as TPresenter;
+            
+            return presenter;
         }
     }
 }

@@ -1,4 +1,5 @@
 
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 using Util;
@@ -14,9 +15,9 @@ namespace Common
     {
         [SerializeField] private Transform rootTr = null;
 
-        public virtual void Initialize()
+        public virtual UniTask InitializeAsync()
         {
-            
+            return UniTask.CompletedTask;
         }
         
         public bool IsActive
