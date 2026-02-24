@@ -1,7 +1,4 @@
 using UnityEngine;
-using Cysharp.Threading.Tasks;
-
-using Common;
 
 public static class SystemInitializer
 {
@@ -9,5 +6,6 @@ public static class SystemInitializer
     static void OnBeforeSceneLoad()
     {
 
+        Debug.Log("[SystemInitializer] Rain runtime install requested.");
     }
 }
