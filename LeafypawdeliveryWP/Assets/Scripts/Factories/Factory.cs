@@ -21,7 +21,7 @@ namespace Factories
         protected TView CreateView<TView>() where TView : Entity
         {
             var viewObj = _addressableManager?.Get<TView>();
-            return GameObject.Instantiate<TView>(viewObj);
+            return GameObject.Instantiate(viewObj);
         }
 
         protected TModel CreateModel<TModel>() where TModel : class, new()
