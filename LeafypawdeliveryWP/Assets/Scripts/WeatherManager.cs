@@ -42,7 +42,7 @@ using Common;
 
         private void Awake()
         {
-            Apply(WeatherType.Rainy);
+            Apply(WeatherType.Snowy);
         }
 
         #region IGeneric
@@ -142,7 +142,12 @@ using Common;
                     Extensions.SetActive(raindropRootTm, true);
                     break;
                 }
-                
+                case WeatherType.Snowy:
+                {
+                    //Extensions.SetActive(, true);
+                    // 눈 파티클은 weatherList의 SnowRoot Transform으로 표시됨
+                    break;
+                }
                 // case WeatherType.Sunny:
                 // {
                 //     Extensions.SetActive(windRootTm, true);
