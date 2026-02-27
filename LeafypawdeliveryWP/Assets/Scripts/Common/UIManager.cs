@@ -14,9 +14,9 @@ namespace Common
         // 현재 열려있는 UI들을 관리하는 리스트 (나중에 닫기/찾기 위해 필요)
         private readonly Dictionary<Type, object> _activePresenters = new();
         
-        public UIManager(AddressableManager addressableManager)
+        public UIManager(UIFactory uiFactory)
         {
-            _uiFactory = new(addressableManager);
+            _uiFactory = uiFactory;
         }
         
         public async UniTask<TPresenter> OpenAsync<TPresenter>() where TPresenter : class

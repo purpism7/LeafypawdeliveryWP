@@ -18,7 +18,8 @@ public abstract class SceneBootstrapper : MonoBehaviour
         var addressableManager = new AddressableManager();
         await addressableManager.PreloadAsync();
         
-        UIManager uiManager = new UIManager(addressableManager);
+        var uiFactory = new UIFactory(addressableManager);
+        UIManager uiManager = new UIManager(uiFactory);
 
         var mainPresenter = await uiManager.OpenAsync<MainPresenter>();
         // MainFactory factory = new MainFactory(addressableManager);
