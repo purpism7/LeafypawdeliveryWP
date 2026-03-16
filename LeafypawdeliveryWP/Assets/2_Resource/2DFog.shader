@@ -1,28 +1,30 @@
-Shader "Custom/2DFog"
+Shader "Custom/MovingFogSpread"
 {
     Properties
     {
-        [MainTexture] _MainTex("Fog Noise Texture", 2D) = "white" {}
-        _SecondTex("Second Noise Texture", 2D) = "white" {}
+        // 텍스처 및 기본 설정
+        [MainTexture] _NoiseTexture ("Noise Texture", 2D) = "white" {}
+        _BaseColor ("Base Color", Color) = (1, 1, 1, 1)
+        _Density ("Fog Density", Range(0.0, 1.0)) = 0.25
+        _Speed ("Fog Speed", Vector) = (0.02, 0.01, 0, 0)
         
-        [HDR] _FogColor("Fog Color", Color) = (1, 1, 1, 1)
-        
-        _Speed1("Layer 1 Speed (XY)", Vector) = (0.1, 0.05, 0, 0)
-        _Speed2("Layer 2 Speed (XY)", Vector) = (-0.05, 0.1, 0, 0)
-        
-        _Density("Fog Density", Range(0, 5)) = 1.0
+        // 포그 형태 조절 (새로 추가된 부분)
+        _Spread ("Fog Spread (퍼짐 정도)", Range(0.0, 1.0)) = 0.5
+        _Softness ("Edge Softness (부드러움)", Range(0.01, 1.0)) = 0.5
     }
 
     SubShader
     {
-        Tags 
-        { 
-            "RenderType" = "Transparent" 
-            "Queue" = "Transparent" 
-            "RenderPipeline" = "UniversalPipeline" 
+        // 2D 렌더링용 태그 설정
+        Tags { 
+            "RenderType"="Transparent" 
+            "Queue"="Transparent" 
+            "RenderPipeline"="UniversalPipeline"
         }
+        LOD 100
 
-        Blend SrcAlpha OneMinusSrcAlpha
+        // 투명도(알파) 처리
+        Blend SrcAlpha OneMinusSrcAlpha 
         ZWrite Off
         Cull Off
 
@@ -36,59 +38,57 @@ Shader "Custom/2DFog"
 
             struct Attributes
             {
-                float4 positionOS   : POSITION;
-                float2 uv           : TEXCOORD0;
-                float4 color        : COLOR; // Sprite Renderer의 컬러 반영용
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+                float4 color : COLOR;
             };
 
             struct Varyings
             {
-                float4 positionCS   : SV_POSITION;
-                float2 uv           : TEXCOORD0;
-                float4 color        : COLOR;
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float4 color : COLOR;
             };
 
-            TEXTURE2D(_MainTex);
-            SAMPLER(sampler_MainTex);
-            TEXTURE2D(_SecondTex);
-            SAMPLER(sampler_SecondTex);
+            // 텍스처 샘플러 선언
+            TEXTURE2D(_NoiseTexture);
+            SAMPLER(sampler_NoiseTexture);
 
+            // 변수 선언 (SRP Batcher 호환)
             CBUFFER_START(UnityPerMaterial)
-                float4 _MainTex_ST;
-                float4 _SecondTex_ST;
-                float4 _FogColor;
-                float2 _Speed1;
-                float2 _Speed2;
+                float4 _NoiseTexture_ST;
+                float4 _BaseColor;
                 float _Density;
+                float4 _Speed;
+                float _Spread;
+                float _Softness;
             CBUFFER_END
 
-            Varyings vert(Attributes IN)
+            Varyings vert(Attributes input)
             {
-                Varyings OUT;
-                OUT.positionCS = TransformObjectToHClip(IN.positionOS.xyz);
-                OUT.uv = IN.uv;
-                OUT.color = IN.color;
-                return OUT;
+                Varyings output;
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.uv = TRANSFORM_TEX(input.uv, _NoiseTexture);
+                output.color = input.color;
+                return output;
             }
 
-            half4 frag(Varyings IN) : SV_Target
+            half4 frag(Varyings input) : SV_Target
             {
-                // 시간 흐름에 따른 UV 오프셋 계산 (_Time.y는 초 단위 시간)
-                float2 uv1 = IN.uv * _MainTex_ST.xy + _MainTex_ST.zw + (_Speed1 * _Time.y);
-                float2 uv2 = IN.uv * _SecondTex_ST.xy + _SecondTex_ST.zw + (_Speed2 * _Time.y);
+                // 시간 흐름에 따른 UV 이동
+                float2 uv = input.uv + _Speed.xy * _Time.y;
 
-                // 노이즈 텍스처 샘플링 (R 채널만 사용해도 무방)
-                half noise1 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv1).r;
-                half noise2 = SAMPLE_TEXTURE2D(_SecondTex, sampler_SecondTex, uv2).r;
+                // 노이즈 텍스처 샘플링
+                float noise = SAMPLE_TEXTURE2D(_NoiseTexture, sampler_NoiseTexture, uv).r;
 
-                // 두 노이즈를 결합하여 풍부한 패턴 생성
-                half combinedNoise = noise1 * noise2 * _Density;
+                // smoothstep을 이용해 안개가 부드럽게 퍼지도록 계산
+                float fog = smoothstep(_Spread - _Softness, _Spread + _Softness, noise);
 
-                // 최종 컬러 계산 (설정한 색상 * 결합 노이즈 * 스프라이트 컬러)
-                half4 finalColor = _FogColor * combinedNoise * IN.color;
-
-                // 결합된 노이즈 값을 알파로 사용하여 투명도 조절
-                finalColor.a = saturate(combinedNoise * _FogColor.a * IN.color.a);
+                // 최종 색상 계산 (기본 색상 * 버텍스 컬러)
+                half4 finalColor = _BaseColor * input.color;
+                
+                // 알파값에 포그 계산 결과와 Density 적용
+                finalColor.a *= fog * _Density;
 
                 return finalColor;
             }

@@ -8,6 +8,7 @@ namespace Common
         
         Rainy,
         Snowy,
+        Foggy,
     }
 }
 

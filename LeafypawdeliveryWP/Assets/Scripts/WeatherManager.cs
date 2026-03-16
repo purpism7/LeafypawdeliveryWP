@@ -42,7 +42,7 @@ using Common;
 
         private void Awake()
         {
-            Apply(WeatherType.Snowy);
+            Apply(WeatherType.Foggy);
         }
 
         #region IGeneric
@@ -144,8 +144,14 @@ using Common;
                 }
                 case WeatherType.Snowy:
                 {
-                    //Extensions.SetActive(, true);
                     // 눈 파티클은 weatherList의 SnowRoot Transform으로 표시됨
+                    break;
+                }
+                case WeatherType.Foggy:
+                {
+                    // 안개는 weatherList의 FogRoot(FogEffect)로 표시됨
+                    if (!weatherList.Any(w => w != null && w.WeatherType == WeatherType.Foggy))
+                        Debug.LogWarning("WeatherManager: Foggy가 weatherList에 없습니다. 메뉴 [Tools > Leafypaw > Setup Fog Effect]를 실행한 뒤, WeatherManager 프리팹을 저장하세요.");
                     break;
                 }
                 // case WeatherType.Sunny:
