@@ -321,7 +321,7 @@ MonoBehaviour:
   fogMaterial: {fileID: 2100000, guid: 891edcd6e1ace4181bd02ecf189facd1, type: 2}
   targetCamera: {fileID: 0}
   distanceFromCamera: 10
-  sizePadding: 2
+  sizePadding: 55
 --- !u!1 &3832713967616622351
 GameObject:
   m_ObjectHideFlags: 0

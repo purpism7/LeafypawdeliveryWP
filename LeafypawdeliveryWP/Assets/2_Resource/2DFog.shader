@@ -76,7 +76,7 @@ Shader "Custom/MovingFogSpread"
             half4 frag(Varyings input) : SV_Target
             {
                 // 시간 흐름에 따른 UV 이동
-                float2 uv = input.uv + _Speed.xy * _Time.y;
+                float2 uv = input.uv + frac(_Speed.xy * _Time.y);
 
                 // 노이즈 텍스처 샘플링
                 float noise = SAMPLE_TEXTURE2D(_NoiseTexture, sampler_NoiseTexture, uv).r;

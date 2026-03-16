@@ -475,7 +475,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11d177a53bb24408f9d65094206cd39f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameSceneBootstrapper
---- !u!1001 &583677063
+--- !u!1001 &546949968
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -486,18 +486,6 @@ PrefabInstance:
     - target: {fileID: 990555547528969717, guid: 57eac9ed2f2564f7ea3e235dfbabf637, type: 3}
       propertyPath: m_Name
       value: WeatherManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 3891082655661314588, guid: 57eac9ed2f2564f7ea3e235dfbabf637, type: 3}
-      propertyPath: weatherList.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3891082655661314588, guid: 57eac9ed2f2564f7ea3e235dfbabf637, type: 3}
-      propertyPath: weatherList.Array.data[2].transform
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3891082655661314588, guid: 57eac9ed2f2564f7ea3e235dfbabf637, type: 3}
-      propertyPath: weatherList.Array.data[2].weatherType
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8857362710153477899, guid: 57eac9ed2f2564f7ea3e235dfbabf637, type: 3}
       propertyPath: m_LocalPosition.x
@@ -873,4 +861,4 @@ SceneRoots:
   - {fileID: 1583756812}
   - {fileID: 1836172026}
   - {fileID: 1346163277}
-  - {fileID: 583677063}
+  - {fileID: 546949968}
