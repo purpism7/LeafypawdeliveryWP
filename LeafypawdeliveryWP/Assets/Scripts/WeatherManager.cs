@@ -42,7 +42,7 @@ using Common;
 
         private void Awake()
         {
-            Apply(WeatherType.Foggy);
+            Apply(WeatherType.Snowy);
         }
 
         #region IGeneric
